@@ -13,6 +13,9 @@ services:
   orderdb:
     image: mcr.microsoft.com/mssql/server:2019-latest
 
+  rabbitmq:
+    image: rabbitmq:3.8.17-management-alpine
+
   pgadmin:
     image: dpage/pgadmin4
 
@@ -54,5 +57,3 @@ volumes:
   portainer_data:
   postgres_data:
   pgadmin_data:
-
-

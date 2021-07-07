@@ -1,13 +1,14 @@
 ﻿using AutoMapper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Basket.API.Entities;
+using EventBus.Messages.Events;
 
 namespace Basket.API.Mapper
 {
     public class BasketProfile : Profile
     {
-        //CreateMap<BasketCheckout, BasketCheckoutEvent>().ReverseMap();
+        public BasketProfile()
+        {
+            CreateMap<BasketCheckout, BasketCheckoutEvent>().ReverseMap();
+        }
     }
 }
