@@ -45,7 +45,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WebApps", "WebApps", "{4727
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspnetRunBasics", "WebApps\AspnetRunBasics\AspnetRunBasics.csproj", "{F78535F3-F190-4A1C-8181-A0A4AC9FBD85}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Logging", "BuildingBlocks\Common.Logging\Common.Logging.csproj", "{5C177C32-C9EF-474D-B913-C64715C1A5AC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.Logging", "BuildingBlocks\Common.Logging\Common.Logging.csproj", "{5C177C32-C9EF-474D-B913-C64715C1A5AC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebStatus", "WebApps\WebStatus\WebStatus.csproj", "{77DEB0F9-C079-453A-A75E-7B6F1F4D1D21}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -109,6 +111,10 @@ Global
 		{5C177C32-C9EF-474D-B913-C64715C1A5AC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5C177C32-C9EF-474D-B913-C64715C1A5AC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5C177C32-C9EF-474D-B913-C64715C1A5AC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{77DEB0F9-C079-453A-A75E-7B6F1F4D1D21}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77DEB0F9-C079-453A-A75E-7B6F1F4D1D21}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77DEB0F9-C079-453A-A75E-7B6F1F4D1D21}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{77DEB0F9-C079-453A-A75E-7B6F1F4D1D21}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -131,6 +137,7 @@ Global
 		{883DA637-470B-4EB3-A622-27D503592B6F} = {78346B2C-3658-496B-A31E-99ECA15F0D4F}
 		{F78535F3-F190-4A1C-8181-A0A4AC9FBD85} = {472762C8-B372-4334-9FB0-E001ADE6E3C4}
 		{5C177C32-C9EF-474D-B913-C64715C1A5AC} = {A3468349-230C-4EBB-AA9E-8743B7E53D34}
+		{77DEB0F9-C079-453A-A75E-7B6F1F4D1D21} = {472762C8-B372-4334-9FB0-E001ADE6E3C4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {192A5DC6-5CA3-47CC-85D3-17C5B261E7E2}
