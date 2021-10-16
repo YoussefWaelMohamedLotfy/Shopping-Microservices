@@ -15,6 +15,10 @@ using Serilog;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using OpenTelemetry.Trace;
+using OpenTelemetry.Resources;
+using OpenTelemetry;
+using OpenTelemetry.Exporter;
 
 namespace AspnetRunBasics
 {
@@ -54,6 +58,27 @@ namespace AspnetRunBasics
 
             services.AddHealthChecks()
                 .AddUrlGroup(new Uri(Configuration["ApiSettings:GatewayAddress"]), "Ocelot API Gw", HealthStatus.Degraded);
+
+            services.AddOpenTelemetryTracing(builder => builder
+                .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("AspnetRunBasics"))
+                .AddHttpClientInstrumentation()
+                .AddSource(nameof(CatalogService))
+                .AddSource(nameof(BasketService))
+                .AddSource(nameof(OrderService))
+                .AddAspNetCoreInstrumentation(opt => opt.Enrich = (activity, key, value) =>
+                {
+                    Console.WriteLine($"Got an activity named {key}");
+                })
+                .AddZipkinExporter(o =>
+                {
+                    o.Endpoint = new Uri(Configuration["ZipkinUrl"]);
+                    o.ExportProcessorType = ExportProcessorType.Simple;
+                })
+                .AddConsoleExporter(o =>
+                {
+                    o.Targets = ConsoleExporterOutputTargets.Console;
+                })
+            );
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

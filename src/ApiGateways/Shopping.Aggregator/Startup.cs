@@ -19,6 +19,11 @@ using Serilog;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
+using Shopping.Aggregator.Controllers;
+using OpenTelemetry;
+using OpenTelemetry.Exporter;
 
 namespace Shopping.Aggregator
 {
@@ -64,6 +69,22 @@ namespace Shopping.Aggregator
                 .AddUrlGroup(new Uri($"{Configuration["ApiSettings:CatalogUrl"]}/swagger/index.html"), "Catalog.API", HealthStatus.Degraded)
                 .AddUrlGroup(new Uri($"{Configuration["ApiSettings:BasketUrl"]}/swagger/index.html"), "Basket.API", HealthStatus.Degraded)
                 .AddUrlGroup(new Uri($"{Configuration["ApiSettings:OrderingUrl"]}/swagger/index.html"), "Ordering.API", HealthStatus.Degraded);
+
+            services.AddOpenTelemetryTracing(builder => builder
+                    .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("Shopping.Aggregator"))
+                    .AddAspNetCoreInstrumentation()
+                    .AddHttpClientInstrumentation()
+                    .AddSource(nameof(ShoppingController))
+                    .AddZipkinExporter(o =>
+                    {
+                        o.Endpoint = new Uri(Configuration["ZipkinUrl"]);
+                        o.ExportProcessorType = ExportProcessorType.Simple;
+                    })
+                    .AddConsoleExporter(o =>
+                    {
+                        o.Targets = ConsoleExporterOutputTargets.Console;
+                    })
+            );
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

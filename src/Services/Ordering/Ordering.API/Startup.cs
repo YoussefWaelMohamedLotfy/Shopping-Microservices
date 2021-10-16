@@ -10,6 +10,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using OpenTelemetry;
+using OpenTelemetry.Exporter;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
+using Ordering.API.Controllers;
 using Ordering.API.EventBusConsumer;
 using Ordering.Application;
 using Ordering.Infrastructure;
@@ -63,6 +68,23 @@ namespace Ordering.API
 
             services.AddHealthChecks()
                     .AddDbContextCheck<OrderContext>();
+
+            services.AddOpenTelemetryTracing(builder => builder
+                    .AddAspNetCoreInstrumentation()
+                    .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("Ordering.API"))
+                    .AddHttpClientInstrumentation()
+                    .AddSource(nameof(OrderController))
+                    .AddMassTransitInstrumentation()
+                    .AddZipkinExporter(o =>
+                    {
+                        o.Endpoint = new Uri(Configuration["ZipkinUrl"]);
+                        o.ExportProcessorType = ExportProcessorType.Simple;
+                    })
+                    .AddConsoleExporter(o =>
+                    {
+                        o.Targets = ConsoleExporterOutputTargets.Console;
+                    })
+            );
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

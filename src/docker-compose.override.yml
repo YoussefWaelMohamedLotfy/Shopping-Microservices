@@ -206,3 +206,8 @@ services:
         - HealthChecksUI__HealthChecks__5__Uri=http://aspnetrunbasics/hc    
     ports:
         - "8007:80"
+
+  zipkin:
+    container_name: zipkin
+    ports:
+        - "9411:9411"

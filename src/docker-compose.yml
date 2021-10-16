@@ -82,6 +82,9 @@ services:
       context: .
       dockerfile: WebApps/WebStatus/Dockerfile
 
+  zipkin:
+    image: openzipkin/zipkin:latest
+
 volumes:
   mongo_data:
   portainer_data:

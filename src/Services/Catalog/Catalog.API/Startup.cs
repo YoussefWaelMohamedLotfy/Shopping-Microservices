@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Catalog.API.Controllers;
 using Catalog.API.Data;
 using Catalog.API.Repositories;
 using HealthChecks.UI.Client;
@@ -15,6 +16,10 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using OpenTelemetry;
+using OpenTelemetry.Exporter;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 
 namespace Catalog.API
 {
@@ -41,6 +46,23 @@ namespace Catalog.API
 
             services.AddHealthChecks()
                 .AddMongoDb(Configuration["DatabaseSettings:ConnectionString"], "MongoDb Health", HealthStatus.Degraded);
+
+            services.AddOpenTelemetryTracing(builder => builder
+                    .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("Catalog.API"))
+                    .AddAspNetCoreInstrumentation()
+                    .AddHttpClientInstrumentation()
+                    .AddSource(nameof(CatalogController))
+                    .AddMongoDBInstrumentation()
+                    .AddZipkinExporter(o =>
+                    {
+                        o.Endpoint = new Uri(Configuration["ZipkinUrl"]);
+                        o.ExportProcessorType = ExportProcessorType.Simple;
+                    })
+                    .AddConsoleExporter(o =>
+                    {
+                        o.Targets = ConsoleExporterOutputTargets.Console;
+                    })
+            );
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

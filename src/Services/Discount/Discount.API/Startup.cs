@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Discount.API.Controllers;
 using Discount.API.Repositories;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Builder;
@@ -13,6 +14,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using OpenTelemetry;
+using OpenTelemetry.Exporter;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 
 namespace Discount.API
 {
@@ -38,6 +43,22 @@ namespace Discount.API
 
             services.AddHealthChecks()
                 .AddNpgSql(Configuration["DatabaseSettings:ConnectionString"]);
+
+            services.AddOpenTelemetryTracing(builder => builder
+                    .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("Discount.API"))
+                    .AddAspNetCoreInstrumentation()
+                    .AddHttpClientInstrumentation()
+                    .AddSource(nameof(DiscountController))
+                    .AddZipkinExporter(o =>
+                    {
+                        o.Endpoint = new Uri(Configuration["ZipkinUrl"]);
+                        o.ExportProcessorType = ExportProcessorType.Simple;
+                    })
+                    .AddConsoleExporter(o =>
+                    {
+                        o.Targets = ConsoleExporterOutputTargets.Console;
+                    })
+            );
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
